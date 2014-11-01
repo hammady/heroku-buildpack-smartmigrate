@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# bin/compile BUILD_DIR CACHE_DIR 
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+
+indent() {
+  sed 's/^/       /'
+}
+
+arrow() {
+  echo; echo "-----> $1"
+}
+
+die() {
+  echo; echo "!     $1"
+  exit 1
+}
+
+# create cache dir
+[ -d "$CACHE_DIR" ] || mkdir "$CACHE_DIR" || die "Error creating cache directory at $CACHE_DIR, aborting"
+
+cd $BUILD_DIR
+cmd="bundle exec rake db:migrate"
+
+if [[ -d db/migrate ]]
+then
+  # checking cache
+  current=`mktemp /tmp/current_XXXXXX`
+  ls -1 db/migrate/ > $current
+  cached="$CACHE_DIR"/migrations
+  if [ -f $cached ]; then
+    # something cached
+    arrow "Checking for new migrations..."
+    diff $current $cached
+    if [ $? -eq 0 ]; then
+      # no change
+      echo "No new migrations detected, doing nothing" | indent
+      rm -f $current
+    else
+      # change detected
+      echo "New migrations detected, now migrating" | indent
+      $cmd || die "Error running migrations, aborting"
+      mv $current $cached
+    fi
+  else
+    # no cache: first run
+    arrow "First run, forcing migrations..."
+    $cmd || die "Error running migrations, aborting"
+    mv $current $cached
+  fi
+fi
+
+exit 0

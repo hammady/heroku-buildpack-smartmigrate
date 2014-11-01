@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# bin/detect BUILD_DIR
+
+BUILD_DIR=$1
+
+[[ -f $BUILD_DIR/Rakefile && -d $BUILD_DIR/db/migrate ]] || exit 1
+
+echo "SmartMigrate"
+

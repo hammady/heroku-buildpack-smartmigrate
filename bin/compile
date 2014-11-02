@@ -21,7 +21,7 @@ die() {
 [ -d "$CACHE_DIR" ] || mkdir "$CACHE_DIR" || die "Error creating cache directory at $CACHE_DIR, aborting"
 
 cd $BUILD_DIR
-cmd="rake db:migrate"
+cmd="gem install bundler && rake db:migrate"
 #cmd="env PATH=$PATH:/bin rake db:migrate"
 
 if [[ -d db/migrate ]]

@@ -22,7 +22,7 @@ die() {
 
 cd $BUILD_DIR
 #cmd="rake db:migrate"
-cmd="echo $PATH && which ruby"
+cmd="env PATH=$PATH:bin bundle exec rake db:migrate"
 
 if [[ -d db/migrate ]]
 then

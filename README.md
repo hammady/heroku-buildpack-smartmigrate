@@ -1,5 +1,8 @@
 # Heroku Buildpack: SmartMigrate
 
+## Update
+For some reason I can't make heroku compiler dyno recognize the bundle or rake commands. Don't use this buildpack yet.
+
 Simple Heroku buildpack to *smartly* run `rake db:migrate` whenever new migrations detected.
 This buildpack is intended to be part of a [Multipack](https://github.com/ddollar/heroku-buildpack-multi) that has a preceding [Ruby buildpack](https://github.com/heroku/heroku-buildpack-ruby).
 

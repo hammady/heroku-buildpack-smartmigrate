@@ -21,8 +21,8 @@ die() {
 [ -d "$CACHE_DIR" ] || mkdir "$CACHE_DIR" || die "Error creating cache directory at $CACHE_DIR, aborting"
 
 cd $BUILD_DIR
-cmd="gem install bundler && rake db:migrate"
-#cmd="env PATH=$PATH:/bin rake db:migrate"
+cmdinstall="gem install bundler"
+cmd="rake db:migrate"
 
 if [[ -d db/migrate ]]
 then
@@ -41,12 +41,14 @@ then
     else
       # change detected
       echo "New migrations detected, now migrating using $cmd" | indent
+      $cmdinstall
       $cmd || die "Error running migrations, aborting"
       mv $current $cached
     fi
   else
     # no cache: first run
     arrow "First run, forcing migrations using $cmd"
+    $cmdinstall
     $cmd || die "Error running migrations, aborting"
     mv $current $cached
   fi

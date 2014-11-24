@@ -12,6 +12,14 @@ arrow() {
   echo; echo "-----> $1"
 }
 
+highlight() {
+  echo
+  printf '*%.0s' {1..100}; echo
+  echo "-----> $1"
+  printf '*%.0s' {1..100}; echo
+  echo
+}
+
 die() {
   echo; echo "!     $1"
   exit 1
@@ -21,7 +29,7 @@ die() {
 [ -d "$CACHE_DIR" ] || mkdir "$CACHE_DIR" || die "Error creating cache directory at $CACHE_DIR, aborting"
 
 cd $BUILD_DIR
-cmd="rake db:migrate"
+cmd="heroku run rake db:migrate"
 
 if [[ -d db/migrate ]]
 then
@@ -39,16 +47,12 @@ then
       rm -f $current
     else
       # change detected
-      echo "New migrations detected, now migrating using $cmd" | indent
-      gem install bundler
-      $cmd || die "Error running migrations, aborting"
+      highlight "NEW MIGRATIONS DETECTED, YOU SHOULD RUN: $cmd"
       mv $current $cached
     fi
   else
     # no cache: first run
-    arrow "First run, forcing migrations using $cmd"
-    gem install bundler
-    $cmd || die "Error running migrations, aborting"
+    highlight "FIRST RUN, YOU MAY NEED TO RUN: $cmd"
     mv $current $cached
   fi
 fi
